@@ -6,43 +6,47 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
   private$db_check_n_refresh()
   on.exit(private$db_disconnect())
   
-  sql <- paste0("SELECT * FROM ", private$db_tables[1], " WHERE username = ?username;")
-  query <- DBI::sqlInterpolate(private$db_conn, sql, username = message$data$username)
+  sql <- paste0("SELECT * FROM ", private$db_tables[1], " WHERE email = ?email;")
+  query <- DBI::sqlInterpolate(private$db_conn, sql, email = message$data$email)
   
   user_data <- DBI::dbGetQuery(private$db_conn, query)
   
   # check condition and create output message accordingly
   
   if (nrow(user_data) == 0) {
-    # if don't return any, then nothing happened
+    #if return no rows, then this is a new user; create an account for him.
     
-    RegLogConnectorMessage(
-      "login", success = FALSE, username = FALSE, password = FALSE,
-      logcontent = paste(message$data$username, "don't exist")
+    sql <- paste0("INSERT INTO ", private$db_tables[1], 
+                  " (username, password, email, create_time, update_time)",
+                  " VALUES (?username, ?password, ?email, ?create_time, ?create_time)")
+    query <- DBI::sqlInterpolate(private$db_conn, sql, 
+                                 username = message$data$email, # username will just be their email
+                                 password = scrypt::hashPassword(getRandomString()), # create a random password that they can reset later if they want to log in through the normal, non-Microsoft way
+                                 email = message$data$email,
+                                 create_time = db_timestamp())
+    
+    DBI::dbExecute(private$db_conn, query)
+    
+    return(
+      RegLogConnectorMessage(
+        "register", 
+        success = TRUE, username = TRUE, email = TRUE,
+        user_id = message$data$email,
+        user_mail = message$data$email,
+        logcontent = paste(message$data$email, message$data$email, sep = "/")
+      )
     )
     
   } else {
-    # if there is a row present, check password
-    
-    if (scrypt::verifyPassword(user_data$password, message$data$password)) {
-      # if success: user logged in
+      # always successfully login since they have already authenticated with Microsoft
       
       RegLogConnectorMessage(
         "login", success = TRUE, username = TRUE, password = TRUE,
         user_id = user_data$username,
         user_mail = user_data$email,
         account_id = user_data$id,
-        logcontent = paste(message$data$username, "logged in")
+        logcontent = paste(message$data$username, "logged in with Microsoft")
       )
-      
-    } else {
-      # if else: the password didn't match
-      
-      RegLogConnectorMessage(
-        "login", success = FALSE, username = TRUE, password = FALSE,
-        logcontent = paste(message$data$username, "bad pass")
-      )
-    }
   }
 }
 
