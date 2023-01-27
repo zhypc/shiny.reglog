@@ -47,7 +47,12 @@ modals_check_n_show <- function(private, modalname) {
 }
 
 check_user_login <- function(x){
-  nchar(x) >= 8 & nchar(x) <= 30 & grepl("^[[:alnum:]]+$", x)
+  nchar(x) >= 8 & nchar(x) <= 30
+}
+
+getRandomString <- function(n = 1) {
+  a <- do.call(paste0, replicate(5, sample(letters, n, TRUE), FALSE))
+  paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(letters, n, TRUE))
 }
 
 check_user_pass <- function(x){
