@@ -31,9 +31,9 @@ RegLog_txts$en = list(
   reset_bttn_2 = "Confirm code",
   ### register module specific labels ####
   register_ui_1 = "Registration form",
-  register_ui_2 = "In the form below you can register a new account. Choose a user ID, provide a valid e-mail adress and choose a password for your account.",
-  register_ui_3 = "User ID and password should consist of 8~30 characters. For user ID every alphanumeric characters are valid. Password should contain at least three out of four following types of characters: big letter, small letter, number, special character.",
-  register_ui_4 = "You should have access to the provided e-mail address. After registration you will receive a confirmation e-mail. Moreover, if you ever forget your password you can reset it with reset code send to provided e-mail.",
+  register_ui_2 = "In the form below you can register a new account. Choose a user ID, provide a valid email adress and choose a password for your account.",
+  register_ui_3 = "User ID and password should consist of 8 to 30 alphanumeric characters (no dots allowed). Password should contain at least three out of four following types of characters: capital letters, lowercase letters, numbers, and special characters.",
+  register_ui_4 = "After registration you will receive a confirmation email. If you forget your password you can reset it with a reset code sent to the email you provided.",
   register_bttn = "Register",
   ## modal texts ####
   ### login modals ####
