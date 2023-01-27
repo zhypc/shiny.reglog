@@ -1,3 +1,51 @@
+
+DBI_login_with_microsoft_handler <- function(self, private, message) {
+  
+  check_namespace("DBI")
+  
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
+  
+  sql <- paste0("SELECT * FROM ", private$db_tables[1], " WHERE username = ?username;")
+  query <- DBI::sqlInterpolate(private$db_conn, sql, username = message$data$username)
+  
+  user_data <- DBI::dbGetQuery(private$db_conn, query)
+  
+  # check condition and create output message accordingly
+  
+  if (nrow(user_data) == 0) {
+    # if don't return any, then nothing happened
+    
+    RegLogConnectorMessage(
+      "login", success = FALSE, username = FALSE, password = FALSE,
+      logcontent = paste(message$data$username, "don't exist")
+    )
+    
+  } else {
+    # if there is a row present, check password
+    
+    if (scrypt::verifyPassword(user_data$password, message$data$password)) {
+      # if success: user logged in
+      
+      RegLogConnectorMessage(
+        "login", success = TRUE, username = TRUE, password = TRUE,
+        user_id = user_data$username,
+        user_mail = user_data$email,
+        account_id = user_data$id,
+        logcontent = paste(message$data$username, "logged in")
+      )
+      
+    } else {
+      # if else: the password didn't match
+      
+      RegLogConnectorMessage(
+        "login", success = FALSE, username = TRUE, password = FALSE,
+        logcontent = paste(message$data$username, "bad pass")
+      )
+    }
+  }
+}
+
 #' DBI login handler
 #' 
 #' @description Default handler function querying database to confirm login 
