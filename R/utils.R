@@ -47,7 +47,7 @@ modals_check_n_show <- function(private, modalname) {
 }
 
 check_user_login <- function(x){
-  nchar(x) >= 8 & nchar(x) <= 30
+  nchar(x) >= 3 & nchar(x) <= 30
 }
 
 getRandomString <- function(n = 1) {

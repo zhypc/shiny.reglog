@@ -93,8 +93,9 @@ RegLogServer_listener <- function(
                 }
               } else {
                 # if login is successful
-                modals_check_n_show(private = private,
-                                    modalname = "login_success")
+                # TODO: Maybe add a toast notification here
+                # modals_check_n_show(private = private,
+                #                     modalname = "login_success")
                 
                 # change the log-in state
                 self$is_logged(TRUE)
