@@ -6,48 +6,38 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
   private$db_check_n_refresh()
   on.exit(private$db_disconnect())
   
-  sql <- paste0("SELECT * FROM ", private$db_tables[1], " WHERE email = ?email;")
-  query <- DBI::sqlInterpolate(private$db_conn, sql, email = message$data$email)
+  sql <- paste0("SELECT * FROM account WHERE email = ?email;")
+  getQuery <- DBI::sqlInterpolate(private$db_conn, sql, email = message$data$email)
   
-  user_data <- DBI::dbGetQuery(private$db_conn, query)
-  
-  # check condition and create output message accordingly
+  user_data <- DBI::dbGetQuery(private$db_conn, getQuery)
   
   if (nrow(user_data) == 0) {
     #if return no rows, then this is a new user; create an account for him.
     
-    sql <- paste0("INSERT INTO ", private$db_tables[1], 
+    sql <- paste0("INSERT INTO account",
                   " (username, password, email, create_time, update_time)",
                   " VALUES (?username, ?password, ?email, ?create_time, ?create_time)")
-    query <- DBI::sqlInterpolate(private$db_conn, sql, 
+    insertQuery <- DBI::sqlInterpolate(private$db_conn, sql, 
                                  username = message$data$email, # username will just be their email
                                  password = scrypt::hashPassword(getRandomString()), # create a random password that they can reset later if they want to log in through the normal, non-Microsoft way
                                  email = message$data$email,
                                  create_time = db_timestamp())
     
-    DBI::dbExecute(private$db_conn, query)
+    DBI::dbExecute(private$db_conn, insertQuery)
     
-    return(
-      RegLogConnectorMessage(
-        "register", 
-        success = TRUE, username = TRUE, email = TRUE,
-        user_id = message$data$email,
-        user_mail = message$data$email,
-        logcontent = paste(message$data$email, message$data$email, sep = "/")
-      )
-    )
-    
-  } else {
-      # always successfully login since they have already authenticated with Microsoft
-      
-      RegLogConnectorMessage(
-        "login", success = TRUE, username = TRUE, password = TRUE,
-        user_id = user_data$username,
-        user_mail = user_data$email,
-        account_id = user_data$id,
-        logcontent = paste(message$data$username, "logged in with Microsoft")
-      )
+    # after creating the user get user data.
+    user_data <- DBI::dbGetQuery(private$db_conn, getQuery)
   }
+    # always successfully login since they have already authenticated with Microsoft
+    
+    # return login success message so that RegLogServer_listener will handle the login process (see line 68 where it receives the message)
+    RegLogConnectorMessage(
+      "login", success = TRUE, username = TRUE, password = TRUE,
+      user_id = user_data$username,
+      user_mail = user_data$email,
+      account_id = user_data$id,
+      logcontent = paste(message$data$username, "logged in with Microsoft")
+    )
 }
 
 #' DBI login handler
@@ -179,6 +169,7 @@ DBI_register_handler = function(self, private, message) {
         success = TRUE, username = TRUE, email = TRUE,
         user_id = message$data$username,
         user_mail = message$data$email,
+        password = message$data$password,
         logcontent = paste(message$data$username, message$data$email, sep = "/")
       )
     )
