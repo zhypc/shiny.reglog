@@ -77,10 +77,9 @@ RegLogServer_backend <- function(
       # register UI reactions ####
       
       observeEvent(input$register_bttn, {
-        
+
         # check if the inputs are filled
-        if (!all(isTruthy(input$register_user_ID), isTruthy(input$register_email),
-                 isTruthy(input$register_pass1), isTruthy(input$register_pass2))) {
+        if (!all(isTruthy(input$register_user_ID), isTruthy(input$register_email))) {
           
           modals_check_n_show(private = private,
                               modalname = "register_noInput")
@@ -103,8 +102,7 @@ RegLogServer_backend <- function(
           
           # check validity of inputs
           
-          if (!check_user_login(input$register_user_ID) || !check_user_mail(input$register_email) ||
-              !check_user_pass(input$register_pass1) || (input$register_pass1 != input$register_pass2)) {
+          if (!check_user_login(input$register_user_ID) || !check_user_mail(input$register_email)) {
             
             # parse message to show
             message_to_show <- RegLogConnectorMessage(
@@ -112,9 +110,7 @@ RegLogServer_backend <- function(
               success = FALSE,
               input_provided = TRUE,
               valid_id = check_user_login(input$register_user_ID),
-              valid_email = check_user_mail(input$register_email),
-              valid_pass = check_user_pass(input$register_pass1),
-              identical_pass = input$register_pass1 == input$register_pass2
+              valid_email = check_user_mail(input$register_email)
             )
             
             # show modalDialog
@@ -122,8 +118,6 @@ RegLogServer_backend <- function(
               private = private,
               modalname = if (!message_to_show$data$valid_id) "register_nonValidId"
               else if (!message_to_show$data$valid_email) "register_nonValidEmail"
-              else if (!message_to_show$data$valid_pass) "register_nonValidPass"
-              else if (!message_to_show$data$identical_pass) "register_notIdenticalPass"
             )
             
             # show message and save to logs if enabled
@@ -135,10 +129,14 @@ RegLogServer_backend <- function(
             on.exit(blank_textInputs(inputs = c("register_user_ID", "register_email"),
                                      session = session), add = T)
             
+            # Portion edited by Philip Zheng so that registering sends an email with password (thereby verifying user has access to the email)----
+            possibleSymbolsForPassword<-c(1:9,letters,LETTERS,"!", "$", "%", "&", "*")
+            temporaryPassword<- paste(sample(possibleSymbolsForPassword,10),collapse="")
+            
             message_to_send <- RegLogConnectorMessage(
               type = "register",
               username = trimws(input$register_user_ID, "both"),
-              password = trimws(input$register_pass1, "both"),
+              password = trimws(temporaryPassword, "both"),
               email = trimws(input$register_email, "both")
             )
             

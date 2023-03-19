@@ -57,14 +57,6 @@ RegLogServer_frontend <- function(
             session$ns("register_email"), 
             label = RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="email")
           ),
-          pass1_input = passwordInput(
-            session$ns("register_pass1"), 
-            label = RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="password")
-          ),
-          pass2_input = passwordInput(
-            session$ns("register_pass2"), 
-            label = RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="password_rep")
-          ),
           confirm_button = actionButton(
             session$ns("register_bttn"), 
             label = RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="register_bttn"),

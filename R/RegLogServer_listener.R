@@ -123,18 +123,14 @@ RegLogServer_listener <- function(
                     username = received_message$data$user_id,
                     email = received_message$data$user_mail,
                     app_name = private$app_name,
-                    app_address = private$app_address
+                    password = received_message$data$password
                   )
                   
+                  # email them their password
                   self$mailConnector$listener(message_to_send)
                   save_to_logs(message_to_send, "sent", self, session)
+                  
                 }
-                
-                # if registration successful log them in automatically
-                self$is_logged(TRUE)
-                self$account_id(received_message$data$account_id)
-                self$user_id(received_message$data$user_id)
-                self$user_mail(received_message$data$user_mail)
                 
               } else {
                 # if registering failed

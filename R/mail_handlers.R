@@ -38,7 +38,7 @@ emayili_reglog_mail_handler <- function(self, private, message) {
       app_address = message$data$app_address,
       reset_code = message$data$reset_code
     ))
-
+  
   # interpolate body with elements found
   mail_body <- string_interpolate(
     x = self$mails[[message$data$process]][["body"]],
@@ -47,7 +47,8 @@ emayili_reglog_mail_handler <- function(self, private, message) {
       email = message$data$email,
       app_name = message$data$app_name,
       app_address = message$data$app_address,
-      reset_code = message$data$reset_code
+      reset_code = message$data$reset_code,
+      password = message$data$password
     ))
   
   # parse the email

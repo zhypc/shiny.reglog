@@ -56,13 +56,7 @@ getRandomString <- function(n = 1) {
 }
 
 check_user_pass <- function(x){
-  pass_length <- nchar(x) >= 8 & nchar(x) <= 30
-  small_letter <- stringi::stri_detect(str = x, regex = "(?=.*[a-z])")
-  big_letter <- stringi::stri_detect(str = x, regex = "(?=.*[A-Z])")
-  pass_number <- stringi::stri_detect(str = x, regex = "(?=.*\\d)")
-  pass_symbols <- stringi::stri_detect(str = x, regex = "[-+_!@#$%^&*.,?]")
-  
-  pass_length && sum(small_letter, big_letter, pass_number, pass_symbols) >= 3
+  nchar(x) >= 8 & nchar(x) <= 30
 }
 
 check_user_mail <- function(x) {

@@ -31,9 +31,9 @@ RegLog_txts$en = list(
   reset_bttn_2 = "Confirm code",
   ### register module specific labels ####
   register_ui_1 = "Registration form",
-  register_ui_2 = "In the form below you can register a new account. Choose a user ID, provide a valid email adress and choose a password for your account.",
-  register_ui_3 = "Password should consist of 8 to 30 characters. Password should contain at least three out of four following types of characters: capital letters, lowercase letters, numbers, and special characters.",
-  register_ui_4 = "After registration you will receive a confirmation email.",
+  register_ui_2 = "To register, choose a user ID and provide a valid email adress",
+  register_ui_3 = "A password will be automatically generated and sent to your email address",
+  register_ui_4 = "Please change the password afterwards using the reset password feature.",
   register_bttn = "Register",
   ## modal texts ####
   ### login modals ####
@@ -93,7 +93,7 @@ RegLog_txts$en = list(
   resetPass_noInput_confirm_t = "Missing data",
   resetPass_noInput_confirm_b = "To reset password with received reset code, please provide your user ID, received code and new password.",
   resetPass_nonValidPass_t = "Non-valid password",
-  resetPass_nonValidPass_b = "Provided new password isn't valid. Password must consist of 8~30 characters. It should also contain at least three out of four following types of characters: big letter, small letter, number, special character.",
+  resetPass_nonValidPass_b = "Provided new password isn't valid. Password must consist of 8~30 characters.",
   resetPass_notIdenticalPass_t = "Passwords don't match.",
   resetPass_notIdenticalPass_b = "Provided passwords don't match. Repeated password must be exactly the same as the first one.",
   resetPass_badId_t = "User ID not found",
