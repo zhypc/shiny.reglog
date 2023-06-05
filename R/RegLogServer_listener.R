@@ -199,7 +199,7 @@ RegLogServer_listener <- function(
                   "reglog_mail",
                   process = "resetPass",
                   username = received_message$data$user_id,
-                  email = received_message$data$user_mail,
+                  email = tolower(received_message$data$user_mail),
                   app_name = private$app_name,
                   app_address = private$app_address,
                   reset_code = received_message$data$reset_code

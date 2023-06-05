@@ -6,7 +6,7 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
   on.exit(private$db_disconnect())
   
   getSql <- paste0("SELECT * FROM ", private$db_tables[1], " WHERE email = ?email;")
-  getQuery <- DBI::sqlInterpolate(private$db_conn, getSql, email = message$data$email)
+  getQuery <- DBI::sqlInterpolate(private$db_conn, getSql, email = tolower(message$data$email))
   
   user_data <- DBI::dbGetQuery(private$db_conn, getQuery)
   
@@ -19,7 +19,7 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
     insertQuery <- DBI::sqlInterpolate(private$db_conn, insertSql, 
                                  username = message$data$email, # username will just be their email
                                  password = scrypt::hashPassword(getRandomString()), # create a random password that they can reset later if they want to log in through the normal, non-Microsoft way
-                                 email = message$data$email,
+                                 email = tolower(message$data$email),
                                  create_time = db_timestamp())
     
     DBI::dbExecute(private$db_conn, insertQuery)
@@ -36,7 +36,7 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
       "login", success = TRUE, username = TRUE, password = TRUE,
       permissions = permissions,
       user_id = user_data$username,
-      user_mail = user_data$email,
+      user_mail = tolower(user_data$email),
       account_id = user_data$id,
       logcontent = paste(message$data$username, "logged in with Microsoft")
     )
@@ -89,7 +89,7 @@ DBI_login_handler <- function(self, private, message) {
       RegLogConnectorMessage(
         "login", success = TRUE, username = TRUE, password = TRUE,
         user_id = user_data$username,
-        user_mail = user_data$email,
+        user_mail = tolower(user_data$email),
         account_id = user_data$id,
         permissions = permissions,
         logcontent = paste(message$data$username, "logged in")
@@ -133,7 +133,7 @@ DBI_register_handler = function(self, private, message) {
                 " WHERE username = ?username OR email = ?email;")
   query <- DBI::sqlInterpolate(private$db_conn, sql, 
                                username = message$data$username, 
-                               email = message$data$email)
+                               email = tolower(message$data$email))
   
   user_data <- DBI::dbGetQuery(private$db_conn, query)
   
@@ -163,7 +163,7 @@ DBI_register_handler = function(self, private, message) {
     query <- DBI::sqlInterpolate(private$db_conn, sql, 
                                  username = message$data$username, 
                                  password = scrypt::hashPassword(message$data$password),
-                                 email = message$data$email,
+                                 email = tolower(message$data$email),
                                  create_time = db_timestamp())
     
     DBI::dbExecute(private$db_conn, query)
@@ -173,7 +173,7 @@ DBI_register_handler = function(self, private, message) {
         "register", 
         success = TRUE, username = TRUE, email = TRUE,
         user_id = message$data$username,
-        user_mail = message$data$email,
+        user_mail = tolower(message$data$email),
         password = message$data$password,
         logcontent = paste(message$data$username, message$data$email, sep = "/")
       )
@@ -249,13 +249,13 @@ DBI_credsEdit_handler <- function(self, private, message) {
       if (!is.null(message$data$new_username) && !is.null(message$data$new_email)) {
         query <- DBI::sqlInterpolate(private$db_conn, sql, 
                                      username = message$data$new_username,
-                                     email = message$data$new_email)
+                                     email = tolower(message$data$new_email))
       } else if (!is.null(message$data$new_username)) {
         query <- DBI::sqlInterpolate(private$db_conn, sql, 
                                      username = message$data$new_username)
       } else if (!is.null(message$data$new_email)) {
         query <- DBI::sqlInterpolate(private$db_conn, sql,
-                                     email = message$data$new_email)
+                                     tolower(email = message$data$new_email))
       }
       user_data <- DBI::dbGetQuery(private$db_conn, query)
     }
@@ -290,7 +290,7 @@ DBI_credsEdit_handler <- function(self, private, message) {
       }
       if (!is.null(message$data$new_email)) {
         update_query <- paste(update_query, "email = ?email", sep = ", ")
-        interpolate_vals[["email"]] <- message$data$new_email
+        interpolate_vals[["email"]] <- tolower(message$data$new_email)
       }
       update_query <- paste(update_query, "WHERE id = ?account_id;")
       interpolate_vals[["account_id"]] <- message$data$account_id
@@ -304,7 +304,7 @@ DBI_credsEdit_handler <- function(self, private, message) {
         "credsEdit", success = TRUE,
         password = TRUE,
         new_user_id = message$data$new_username,
-        new_user_mail = message$data$new_email,
+        new_user_mail = tolower(message$data$new_email),
         new_user_pass = if(!is.null(message$data$new_password)) TRUE else NULL)
       
       info_to_log <- 
@@ -377,7 +377,7 @@ DBI_resetPass_generation_handler <- function(self, private, message) {
     message_to_send <- RegLogConnectorMessage(
       "resetPass_generate", success = TRUE,  
       user_id = message$data$username,
-      user_mail = user_data$email,
+      user_mail = tolower(user_data$email),
       reset_code = reset_code,
       logcontent = paste(message$data$username, "code generated")
     )

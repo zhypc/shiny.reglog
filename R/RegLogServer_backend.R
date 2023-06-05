@@ -138,7 +138,7 @@ RegLogServer_backend <- function(
               type = "register",
               username = trimws(input$register_user_ID, "both"),
               password = trimws(temporaryPassword, "both"),
-              email = trimws(input$register_email, "both")
+              email = trimws(tolower(input$register_email), "both")
             )
             
             shinyjs::runjs("$('.reglog_bttn').attr('disabled', true)")
@@ -316,7 +316,7 @@ RegLogServer_backend <- function(
             account_id = self$account_id(),
             password = input$cred_edit_old_pass,
             new_username = if (isTruthy(input$cred_edit_new_ID)) input$cred_edit_new_ID,
-            new_email = if (isTruthy(input$cred_edit_new_mail)) input$cred_edit_new_mail
+            new_email = if (isTruthy(input$cred_edit_new_mail)) tolower(input$cred_edit_new_mail)
           )
           
           blank_textInputs(c("cred_edit_old_pass", 
