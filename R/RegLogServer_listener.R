@@ -102,7 +102,7 @@ RegLogServer_listener <- function(
                 self$account_id(received_message$data$account_id)
                 self$user_id(received_message$data$user_id)
                 self$user_mail(received_message$data$user_mail)
-                
+                self$permissions(received_message$data$permissions)
               }
             },
             

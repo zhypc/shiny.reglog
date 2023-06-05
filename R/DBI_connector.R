@@ -106,7 +106,7 @@ RegLogDBIConnector = R6::R6Class(
     initialize = function(
       driver,
       ...,
-      table_names = c("account", "reset_code", "logs"),
+      table_names = c("users", "reset_codes", "logs"),
       custom_handlers = NULL
     ) {
       

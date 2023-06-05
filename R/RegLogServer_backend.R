@@ -22,6 +22,7 @@ RegLogServer_backend <- function(
       self$is_logged <- reactiveVal(FALSE)
       self$user_id <- reactiveVal(uuid::UUIDgenerate())
       self$user_mail <- reactiveVal()
+      self$permissions <- reactiveVal()
       self$account_id <- reactiveVal()
       private$listener <- reactiveVal()
       

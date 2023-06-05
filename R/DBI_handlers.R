@@ -1,4 +1,3 @@
-
 DBI_login_with_microsoft_handler <- function(self, private, message) {
   
   check_namespace("DBI")
@@ -6,18 +5,18 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
   private$db_check_n_refresh()
   on.exit(private$db_disconnect())
   
-  sql <- paste0("SELECT * FROM account WHERE email = ?email;")
-  getQuery <- DBI::sqlInterpolate(private$db_conn, sql, email = message$data$email)
+  getSql <- paste0("SELECT * FROM ", private$db_tables[1], " WHERE email = ?email;")
+  getQuery <- DBI::sqlInterpolate(private$db_conn, getSql, email = message$data$email)
   
   user_data <- DBI::dbGetQuery(private$db_conn, getQuery)
   
   if (nrow(user_data) == 0) {
     #if return no rows, then this is a new user; create an account for him.
     
-    sql <- paste0("INSERT INTO account",
+    insertSql <- paste0("INSERT INTO ", private$db_tables[1],
                   " (username, password, email, create_time, update_time)",
                   " VALUES (?username, ?password, ?email, ?create_time, ?create_time)")
-    insertQuery <- DBI::sqlInterpolate(private$db_conn, sql, 
+    insertQuery <- DBI::sqlInterpolate(private$db_conn, insertSql, 
                                  username = message$data$email, # username will just be their email
                                  password = scrypt::hashPassword(getRandomString()), # create a random password that they can reset later if they want to log in through the normal, non-Microsoft way
                                  email = message$data$email,
@@ -29,10 +28,13 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
     user_data <- DBI::dbGetQuery(private$db_conn, getQuery)
   }
     # always successfully login since they have already authenticated with Microsoft
-    
+  
+    permissions <- getUserPermissions(user_data$id, private$db_conn)
+
     # return login success message so that RegLogServer_listener will handle the login process (see line 68 where it receives the message)
     RegLogConnectorMessage(
       "login", success = TRUE, username = TRUE, password = TRUE,
+      permissions = permissions,
       user_id = user_data$username,
       user_mail = user_data$email,
       account_id = user_data$id,
@@ -82,11 +84,14 @@ DBI_login_handler <- function(self, private, message) {
     if (scrypt::verifyPassword(user_data$password, message$data$password)) {
       # if success: user logged in
       
+      permissions <- getUserPermissions(user_data$id, private$db_conn)
+      
       RegLogConnectorMessage(
         "login", success = TRUE, username = TRUE, password = TRUE,
         user_id = user_data$username,
         user_mail = user_data$email,
         account_id = user_data$id,
+        permissions = permissions,
         logcontent = paste(message$data$username, "logged in")
       )
       

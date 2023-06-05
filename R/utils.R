@@ -129,3 +129,14 @@ db_timestamp <- function() {
   format(Sys.time(), format = "%Y-%m-%d %H:%M:%OS3")
   
 }
+
+getUserPermissions <- function(userId, conn){
+  getUserPermissionsSql = 
+    "SELECT permissions.id, studies.code, users.username FROM permissions
+        INNER JOIN studies ON studies.id = permissions.study_id
+        INNER JOIN users ON users.id = permissions.user_id
+       WHERE user_id = ?user_id"
+  getUserPermissionQuery = DBI::sqlInterpolate(conn, getUserPermissionsSql, user_id = userId)
+  DBI::dbGetQuery(conn, getUserPermissionQuery)
+}
+
