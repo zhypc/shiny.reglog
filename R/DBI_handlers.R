@@ -255,7 +255,7 @@ DBI_credsEdit_handler <- function(self, private, message) {
                                      username = message$data$new_username)
       } else if (!is.null(message$data$new_email)) {
         query <- DBI::sqlInterpolate(private$db_conn, sql,
-                                     tolower(email = message$data$new_email))
+                                     email = tolower(message$data$new_email))
       }
       user_data <- DBI::dbGetQuery(private$db_conn, query)
     }
