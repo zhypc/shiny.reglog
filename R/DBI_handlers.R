@@ -33,7 +33,7 @@ DBI_login_with_microsoft_handler <- function(self, private, message) {
 
     # return login success message so that RegLogServer_listener will handle the login process (see line 68 where it receives the message)
     RegLogConnectorMessage(
-      "login", success = TRUE, username = TRUE, password = TRUE,
+      "login", success = TRUE, username = TRUE, password = TRUE, is_logged_microsoft = TRUE,
       permissions = permissions,
       user_id = user_data$username,
       user_mail = tolower(user_data$email),
@@ -87,7 +87,7 @@ DBI_login_handler <- function(self, private, message) {
       permissions <- getUserPermissions(user_data$id, private$db_conn)
       
       RegLogConnectorMessage(
-        "login", success = TRUE, username = TRUE, password = TRUE,
+        "login", success = TRUE, username = TRUE, password = TRUE, is_logged_microsoft = TRUE,
         user_id = user_data$username,
         user_mail = tolower(user_data$email),
         account_id = user_data$id,

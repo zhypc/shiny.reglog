@@ -13,6 +13,8 @@ RegLogServer <- R6::R6Class(
     #' @field is_logged reactiveVal containing logical indicating if the user 
     #' is logged in
     is_logged = NULL,
+    #' @field is_logged_microsoft reactiveVal containing logical indicating if the user used Microsoft to log in 
+    is_logged_microsoft = NULL,
     #' @field user_id reactiveVal containing character specifying the logged 
     #' user name. If the user is not logged in, it will consist 
     #' of uuid generated with `uuid::UUIDgenerate`

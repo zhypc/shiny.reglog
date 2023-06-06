@@ -44,6 +44,8 @@ RegLogServer_listener <- function(
                 self$user_id(uuid::UUIDgenerate())
                 self$user_mail(NULL)
                 self$account_id(NULL)
+                self$permissions(NULL)
+                self$is_logged_microsoft(FALSE)
                 
               } else {
                 
@@ -103,6 +105,7 @@ RegLogServer_listener <- function(
                 self$user_id(received_message$data$user_id)
                 self$user_mail(received_message$data$user_mail)
                 self$permissions(received_message$data$permissions)
+                self$is_logged_microsoft(received_message$data$is_logged_microsoft)
               }
             },
             
