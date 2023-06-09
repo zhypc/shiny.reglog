@@ -119,6 +119,8 @@ RegLogDBIConnector = R6::R6Class(
       self$handlers[["resetPass_generate"]] <- DBI_resetPass_generation_handler
       self$handlers[["resetPass_confirm"]] <- DBI_resetPass_confirmation_handler
       self$handlers[["loginWithMicrosoft"]] <- DBI_login_with_microsoft_handler
+      self$handlers[["getAllPermissions"]] <- DBI_get_all_permissions_handler
+      self$handlers[["adjustPermissions"]] <- DBI_adjust_permissions_handler
       
       super$initialize(custom_handlers = custom_handlers)
       # store the arguments internally

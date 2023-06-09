@@ -78,6 +78,40 @@ RegLogServer_listener <- function(
           switch(
             received_message$type,
             
+            getAllPermissions = {
+              self$all_permissions(received_message$data$all_permissions)
+              self$all_companies(received_message$data$all_companies)
+              self$all_studies(received_message$data$all_studies)
+              self$all_users(received_message$data$all_users)
+              self$message(received_message)
+            },
+            
+            adjustPermissions = {
+              if(received_message$data$action == "Grant"){
+                if(received_message$data$success){
+                  modals_check_n_show(private = private,
+                                      modalname = "permission_grant_success")
+                }
+                else{
+                  modals_check_n_show(private = private,
+                                      modalname = "permission_grant_fail")
+                }
+              }
+              else if(received_message$data$action == "Revoke"){
+                if(received_message$data$success){
+                  modals_check_n_show(private = private,
+                                      modalname = "permission_revoke_success")
+                }
+                else{
+                  modals_check_n_show(private = private,
+                                      modalname = "permission_revoke_fail")
+                }
+              }
+              
+              self$all_permissions(received_message$data$all_permissions)
+              self$message(received_message)
+            },
+            
             ## login messages reactions ####
             login = {
               # if couldn't log in

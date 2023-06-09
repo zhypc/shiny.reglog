@@ -1,3 +1,103 @@
+DBI_get_all_permissions_handler <- function(self, private, message){
+  
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
+  
+  getCompaniesSql <- "SELECT * FROM companies"
+  getStudiesSql <- "SELECT * FROM studies"
+  getUsersSql <- "SELECT * FROM users"
+  allCompanies <- DBI::dbGetQuery(private$db_conn, getCompaniesSql)
+  allStudies <- DBI::dbGetQuery(private$db_conn, getStudiesSql)
+  allUsers <- DBI::dbGetQuery(private$db_conn, getUsersSql)
+  
+  allPermissions <- getAllPermissions(private$db_conn)
+  
+  RegLogConnectorMessage(
+    "getAllPermissions", success = TRUE, 
+    all_permissions = allPermissions,
+    all_companies = allCompanies,
+    all_studies = allStudies,
+    all_users = allUsers
+  )
+}
+
+DBI_adjust_permissions_handler <- function(self, private, message){
+  
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
+  
+  #set up the 'message to return' ahead of time so we don't need to repeat this code later
+  messageToReturn <- RegLogConnectorMessage(
+    message$type,
+    success = TRUE,
+    action = message$data$action,
+    logcontent = paste0(message$data$action, " permissions for user: ", 
+                        message$data$username, "/",
+                        message$data$email, 
+                        " to study: ", message$data$study,
+                        " succeeded")
+  )
+
+  if(message$data$action == "Grant"){
+    
+    userId <- getUserIdFromUsername(private$db_conn, message$data$username)
+    
+    studyId <- getStudyIdFromCode(private$db_conn, message$data$study)
+    
+    permissionInsertSql <- paste0("INSERT INTO permissions",
+                                  " (user_id, study_id, create_time, update_time)",
+                                  " VALUES (?user_id, ?study_id, ?create_time, ?create_time)")
+    
+    permissionInsertStatement <- DBI::sqlInterpolate(private$db_conn, permissionInsertSql,
+                                                              user_id = userId,
+                                                              study_id = studyId,
+                                                              create_time = db_timestamp())
+    
+    tryCatch({
+      DBI::dbExecute(private$db_conn, permissionInsertStatement)
+     }, 
+     error = function(error){
+       # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+       messageToReturn$data$success <<- FALSE
+       messageToReturn$logcontent <<- paste0("Granting permissions failed for user: ", 
+                                            message$data$username, "/",
+                                            message$data$email, ": ",
+                                            " Action: ", message$data$action,
+                                            " Study: ", message$data$study,
+                                            " Error: ", paste(error, collapse = ";"))
+     })
+  } else if(message$data$action == "Revoke"){
+    userId <- getUserIdFromUsername(private$db_conn, message$data$username)
+    
+    studyId <- getStudyIdFromCode(private$db_conn, message$data$study)
+    
+    permissionRemoveSql <- "DELETE FROM permissions WHERE user_id = ?user_id AND study_id = ?study_id"
+    
+    
+    permissionRemoveStatement <- DBI::sqlInterpolate(private$db_conn, permissionRemoveSql,
+                                                     user_id = userId,
+                                                     study_id = studyId)
+    tryCatch({
+      DBI::dbExecute(private$db_conn, permissionRemoveStatement)
+    }, 
+    error = function(error){
+      # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+      messageToReturn$data$success <<- FALSE
+      messageToReturn$logcontent <<- paste0("Revoking permissions failed for user: ", 
+                                           message$data$username, "/",
+                                           message$data$email, ": ",
+                                           " Action: ", message$data$action,
+                                           " Study: ", message$data$study,
+                                           " Error: ", paste(error, collapse = ";"))
+    })
+  }
+
+  messageToReturn$data$all_permissions <- getAllPermissions(private$db_conn)
+  return(messageToReturn)
+}
+
 DBI_login_with_microsoft_handler <- function(self, private, message) {
   
   check_namespace("DBI")

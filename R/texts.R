@@ -36,6 +36,15 @@ RegLog_txts$en = list(
   register_ui_4 = "Please change the password afterwards using the reset password feature.",
   register_bttn = "Register",
   ## modal texts ####
+  ### permissions management modals ####
+  permission_grant_success_t = "Permission granted",
+  permission_grant_success_b = "Permission granted to user",
+  permission_grant_fail_t = "Error",
+  permission_grant_fail_b = "Permission was not granted to user. Please check if this is a valid action. Does the user already have access?",
+  permission_revoke_success_t = "Permission revoked",
+  permission_revoke_success_b = "Permission revoked for user",
+  permission_revoke_fail_t = "Error",
+  permission_revoke_fail_b = "Permission was not revoked for user. Please check if this is a valid action.",
   ### login modals ####
   login_noInput_t = "Missing data",
   login_noInput_b = "To login, please provide your User ID and password.",

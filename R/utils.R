@@ -140,3 +140,22 @@ getUserPermissions <- function(userId, conn){
   DBI::dbGetQuery(conn, getUserPermissionQuery)
 }
 
+
+getAllPermissions <- function(conn) {
+  getPermissionsSql <- "SELECT permissions.id AS Id, users.username AS Username, studies.code AS Study FROM permissions 
+                  INNER JOIN users ON users.id = permissions.user_id
+                  INNER JOIN studies ON studies.id = permissions.study_id"
+  DBI::dbGetQuery(conn, getPermissionsSql)
+}
+
+getUserIdFromUsername <- function(conn, username){
+  getUserSql <- "SELECT id FROM users WHERE username = ?username"
+  getUserQuery <- DBI::sqlInterpolate(conn, getUserSql, username = username)
+  DBI::dbGetQuery(conn, getUserQuery)[[1]]
+}
+
+getStudyIdFromCode <- function(conn, code){
+  getStudySql <- "SELECT id FROM studies WHERE code = ?code"
+  getStudyQuery <- DBI::sqlInterpolate(conn, getStudySql, code = code)
+  DBI::dbGetQuery(conn, getStudyQuery)[[1]]
+}

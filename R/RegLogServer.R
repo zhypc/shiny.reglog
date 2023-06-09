@@ -22,8 +22,16 @@ RegLogServer <- R6::R6Class(
     #' @field user_mail reactiveVal cantaining character string specifying the 
     #' logged user mail. When not logged in, it contains NULL.
     user_mail = NULL,
-    #' @field permissions table of user permissions for various studies
+    #' @field permissions table of current user's permissions for various studies
     permissions = NULL,
+    #' @field all_permissions table of all users' permissions for various studies
+    all_permissions = NULL,
+    #' @field all_users table of all users
+    all_users = NULL,
+    #' @field all_companies table of all companies
+    all_companies = NULL,
+    #' @field all_studies table of all studies
+    all_studies = NULL,
     #' @field account_id reactiveVal caintaining integer specifying the logged 
     #' user account's id number: for SQL database it is equal to the value
     #' contained withing `id` variable. For googlesheets database it is equal to
