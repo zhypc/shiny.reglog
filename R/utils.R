@@ -166,7 +166,7 @@ getAllCompanies <- function(conn) {
 }
 
 getAllStudies <- function(conn) {
-  getStudiesSql <- "SELECT code AS Code, companies.description AS Company, description AS Long_name from studies
+  getStudiesSql <- "SELECT studies.code AS Code, companies.description AS Company, studies.description AS Long_name from studies
                    INNER JOIN companies ON companies.id = studies.company_id"
   DBI::dbGetQuery(conn, getStudiesSql)
 }
