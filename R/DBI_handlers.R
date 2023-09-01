@@ -16,7 +16,7 @@ DBI_get_all_permissions_handler <- function(self, private, message){
   studiesTable <- getAllStudies(private$db_conn)
   
   RegLogConnectorMessage(
-    "getAllPermissions", success = TRUE, 
+    "getAllPermissions", "companiesTable", "studiesTable", success = TRUE, 
     all_permissions = allPermissions,
     all_companies = allCompanies,
     all_studies = allStudies,

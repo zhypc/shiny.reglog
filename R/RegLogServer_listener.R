@@ -83,6 +83,8 @@ RegLogServer_listener <- function(
               self$all_companies(received_message$data$all_companies)
               self$all_studies(received_message$data$all_studies)
               self$all_users(received_message$data$all_users)
+              self$companies_table(received_message$data$companies_table)
+              self$studies_table(received_message$data$studies_table)
               self$message(received_message)
             },
             
