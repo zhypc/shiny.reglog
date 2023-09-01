@@ -12,13 +12,17 @@ DBI_get_all_permissions_handler <- function(self, private, message){
   allUsers <- DBI::dbGetQuery(private$db_conn, getUsersSql)
   
   allPermissions <- getAllPermissions(private$db_conn)
+  companiesTable <- getAllCompanies(private$db_conn)
+  studiesTable <- getAllStudies(private$db_conn)
   
   RegLogConnectorMessage(
     "getAllPermissions", success = TRUE, 
     all_permissions = allPermissions,
     all_companies = allCompanies,
     all_studies = allStudies,
-    all_users = allUsers
+    all_users = allUsers,
+    companies_table = companiesTable,
+    studies_table = studiesTable
   )
 }
 
@@ -96,6 +100,14 @@ DBI_adjust_permissions_handler <- function(self, private, message){
 
   messageToReturn$data$all_permissions <- getAllPermissions(private$db_conn)
   return(messageToReturn)
+}
+
+DBI_edit_company_handler <- function(self, private, message) {
+  
+}
+
+DBI_edit_study_handler <- function(self, private, message) {
+  
 }
 
 DBI_login_with_microsoft_handler <- function(self, private, message) {

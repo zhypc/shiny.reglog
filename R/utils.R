@@ -159,3 +159,14 @@ getStudyIdFromCode <- function(conn, code){
   getStudyQuery <- DBI::sqlInterpolate(conn, getStudySql, code = code)
   DBI::dbGetQuery(conn, getStudyQuery)[[1]]
 }
+
+getAllCompanies <- function(conn) {
+  getCompaniesSql <- "SELECT code AS Code, description AS Company from companies"
+  DBI::dbGetQuery(conn, getCompaniesSql)
+}
+
+getAllStudies <- function(conn) {
+  getStudiesSql <- "SELECT code AS Code, companies.description AS Company, description AS Long_name from studies
+                   INNER JOIN companies ON companies.id = studies.company_id"
+  DBI::dbGetQuery(conn, getStudiesSql)
+}
