@@ -16,7 +16,7 @@ DBI_get_all_permissions_handler <- function(self, private, message){
   studiesTable <- getAllStudies(private$db_conn)
   
   RegLogConnectorMessage(
-    "getAllPermissions", "companiesTable", "studiesTable", success = TRUE, 
+    "getAllPermissions", success = TRUE, 
     all_permissions = allPermissions,
     all_companies = allCompanies,
     all_studies = allStudies,
@@ -102,12 +102,291 @@ DBI_adjust_permissions_handler <- function(self, private, message){
   return(messageToReturn)
 }
 
-DBI_edit_company_handler <- function(self, private, message) {
+DBI_add_company_handler <- function(self, private, message) {
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
   
+  #set up the 'message to return' ahead of time so we don't need to repeat this code later
+  messageToReturn <- RegLogConnectorMessage(
+    message$type,
+    success = TRUE,
+    logcontent = paste0("Company: ", message$data$companyDesc, " added by ", 
+                        message$data$username, "/",
+                        message$data$email,
+                        " succeeded")
+  )
+  
+  companyCode <- message$data$companyCode
+  companyDesc <- message$data$companyDesc
+  
+  addCompanySql <- paste0(
+    "INSERT INTO companies (code, description, create_time, update_time) VALUES(",
+    "?company_code, ?company_desc,",
+    "?create_time, ?create_time)"
+  )
+  addCompanyStmt <- DBI::sqlInterpolate(private$db_conn,
+                                        addCompanySql,
+                                        company_code = companyCode,
+                                        company_desc = companyDesc,
+                                        create_time = db_timestamp())
+  tryCatch({
+    DBI::dbExecute(private$db_conn, addCompanyStmt)
+  }, 
+  error = function(error){
+    # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+    messageToReturn$data$success <<- FALSE
+    messageToReturn$logcontent <<- paste0("Addition of company: ", companyCode, " by ",
+                                          message$data$username, "/",
+                                          message$data$email, ": ",
+                                          " Error: ", paste(error, collapse = ";"))
+    print(error)
+  })
+  messageToReturn$data$companies_table <- getAllCompanies(private$db_conn)
+  getCompaniesSql <- "SELECT * FROM companies"
+  messageToReturn$data$all_companies <- DBI::dbGetQuery(private$db_conn, getCompaniesSql)
+  return(messageToReturn)
+}
+
+DBI_edit_company_handler <- function(self, private, message) {
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
+  
+  #set up the 'message to return' ahead of time so we don't need to repeat this code later
+  messageToReturn <- RegLogConnectorMessage(
+    message$type,
+    success = TRUE,
+    logcontent = paste0("Company: ", message$data$companyDesc, " updated by ", 
+                        message$data$username, "/",
+                        message$data$email,
+                        " succeeded")
+  )
+  
+  companyCode <- message$data$companyCode
+  companyDesc <- message$data$companyDesc
+  companyId <- message$data$companyId
+  
+  updateCompanySql <- paste0("UPDATE companies SET ",
+                             "code = ?company_code, ",
+                             "description = ?company_desc ",
+                             "where id = ?company_id")
+  updateCompanyStmt <- DBI::sqlInterpolate(private$db_conn,
+                                           updateCompanySql,
+                                           company_code = companyCode,
+                                           company_desc = companyDesc,
+                                           company_id = companyId)
+  tryCatch({
+    DBI::dbExecute(private$db_conn, updateCompanyStmt)
+  }, 
+  error = function(error){
+    # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+    messageToReturn$data$success <<- FALSE
+    messageToReturn$logcontent <<- paste0("Update of company: ", companyCode, " by ",
+                                          message$data$username, "/",
+                                          message$data$email, ": ",
+                                          " Error: ", paste(error, collapse = ";"))
+    print(error)
+  })
+  messageToReturn$data$companies_table <- getAllCompanies(private$db_conn)
+  getCompaniesSql <- "SELECT * FROM companies"
+  messageToReturn$data$all_companies <- DBI::dbGetQuery(private$db_conn, getCompaniesSql)
+  return(messageToReturn)
+}
+
+DBI_del_company_handler <- function(self, private, message) {
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
+  
+  #set up the 'message to return' ahead of time so we don't need to repeat this code later
+  messageToReturn <- RegLogConnectorMessage(
+    message$type,
+    success = TRUE,
+    logcontent = paste0("Company: ", message$data$companyDesc, " deleted by ", 
+                        message$data$username, "/",
+                        message$data$email,
+                        " succeeded")
+  )
+  companyDesc <- message$data$companyDesc
+  delCompanySql <- paste0(
+    "DELETE FROM companies",
+    " WHERE description = ?company_desc"
+  )
+  delCompanyStmt <- DBI::sqlInterpolate(private$db_conn,
+                                        delCompanySql,
+                                        company_desc = companyDesc
+                                        )
+  tryCatch({
+    DBI::dbExecute(private$db_conn, delCompanyStmt)
+  }, 
+  error = function(error){
+    # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+    messageToReturn$data$success <<- FALSE
+    messageToReturn$logcontent <<- paste0("Deletion of company: ", companyDesc, " by ",
+                                          message$data$username, "/",
+                                          message$data$email, ": ",
+                                          " Error: ", paste(error, collapse = ";"))
+    print(error)
+  })
+  messageToReturn$data$companies_table <- getAllCompanies(private$db_conn)
+  getCompaniesSql <- "SELECT * FROM companies"
+  messageToReturn$data$all_companies <- DBI::dbGetQuery(private$db_conn, getCompaniesSql)
+  return(messageToReturn)
+}
+
+DBI_add_study_handler <- function(self, private, message) {
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
+  
+  #set up the 'message to return' ahead of time so we don't need to repeat this code later
+  messageToReturn <- RegLogConnectorMessage(
+    message$type,
+    success = TRUE,
+    logcontent = paste0("Study: ", message$data$studyCode, " added by ", 
+                        message$data$username, "/",
+                        message$data$email,
+                        " succeeded")
+  )
+  
+  studyCode <- message$data$studyCode
+  studyDesc <- message$data$studyDesc
+  companyDesc <- message$data$companyDesc
+  trialDrug <- message$data$trialDrug
+  uniqueSubjId <- message$data$uniqueSubjId
+  companyId <- getCompanyIdFromDescription(private$db_conn, companyDesc)
+  
+  addStudySql <- paste0(
+    "INSERT INTO studies (code, company_id,",
+    " description, create_time,",
+    " update_time, subjid_unique,",
+    " drug_name) VALUES(",
+    "?study_code, ?company_id,",
+    " ?study_desc, ?create_time,",
+    " ?create_time, ?subjid_unique, ?trial_drug)"
+  )
+  addStudyStmt <- DBI::sqlInterpolate(private$db_conn,
+                                      addStudySql,
+                                      study_code = studyCode,
+                                      company_id = companyId,
+                                      study_desc = studyDesc,
+                                      create_time = db_timestamp(),
+                                      subjid_unique = uniqueSubjId,
+                                      trial_drug = trialDrug
+                                      )
+  tryCatch({
+    DBI::dbExecute(private$db_conn, addStudyStmt)
+  }, 
+  error = function(error){
+    # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+    messageToReturn$data$success <<- FALSE
+    messageToReturn$logcontent <<- paste0("Addition of study: ", studyCode, " by ",
+                                          message$data$username, "/",
+                                          message$data$email, ": ",
+                                          " Error: ", paste(error, collapse = ";"))
+    print(error)
+  })
+  messageToReturn$data$studies_table <- getAllStudies(private$db_conn)
+  getStudiesSql <- "SELECT * FROM studies"
+  messageToReturn$data$all_studies <- DBI::dbGetQuery(private$db_conn, getStudiesSql)
+  return(messageToReturn)
 }
 
 DBI_edit_study_handler <- function(self, private, message) {
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
   
+  #set up the 'message to return' ahead of time so we don't need to repeat this code later
+  messageToReturn <- RegLogConnectorMessage(
+    message$type,
+    success = TRUE,
+    logcontent = paste0("Study: ", message$data$studyCode, " updated by ", 
+                        message$data$username, "/",
+                        message$data$email, 
+                        " succeeded")
+  )
+  
+  studyCode <- message$data$studyCode
+  companyId <- getCompanyIdFromDescription(private$db_conn, message$data$companyDesc)
+  studyName <- message$data$studyName
+  drugName <- message$data$drugName
+  uniqSubjId <- strtoi(message$data$uniqSubjID)
+  studyId <- message$data$studyId
+  
+  studyUpdateSql <- paste0("UPDATE studies SET ",
+                           "code = ?study_code, ",
+                           "company_id = ?company_id, ",
+                           "description = ?description, ", 
+                           "drug_name = ?drug_name, ", 
+                           "subjid_unique = ?subjid_unique ",
+                           "WHERE id = ?study_id")
+  studyUpdateStmt <- DBI::sqlInterpolate(private$db_conn,
+                                         studyUpdateSql,
+                                         study_code = studyCode,
+                                         company_id = companyId,
+                                         description = studyName,
+                                         drug_name = drugName,
+                                         subjid_unique = uniqSubjId,
+                                         study_id = studyId)
+  tryCatch({
+    DBI::dbExecute(private$db_conn, studyUpdateStmt)
+  }, 
+  error = function(error){
+    # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+    messageToReturn$data$success <<- FALSE
+    messageToReturn$logcontent <<- paste0("Update of study: ", studyCode, " by ",
+                                          message$data$username, "/",
+                                          message$data$email, ": ",
+                                          " Error: ", paste(error, collapse = ";"))
+    print(error)
+  })
+  messageToReturn$data$studies_table <- getAllStudies(private$db_conn)
+  getStudiesSql <- "SELECT * FROM studies"
+  messageToReturn$data$all_studies <- DBI::dbGetQuery(private$db_conn, getStudiesSql)
+  return(messageToReturn)
+}
+
+DBI_del_study_handler <- function(self, private, message) {
+  check_namespace("DBI")
+  private$db_check_n_refresh()
+  on.exit(private$db_disconnect())
+  
+  #set up the 'message to return' ahead of time so we don't need to repeat this code later
+  messageToReturn <- RegLogConnectorMessage(
+    message$type,
+    success = TRUE,
+    logcontent = paste0("Study: ", message$data$studyCode, " deleted by ", 
+                        message$data$username, "/",
+                        message$data$email,
+                        " succeeded")
+  )
+  studyCode <- message$data$studyCode
+  delStudySql <- paste0(
+    "DELETE FROM studies",
+    " WHERE code = ?study_code"
+  )
+  delStudyStmt <- DBI::sqlInterpolate(private$db_conn,
+                                        delStudySql,
+                                        study_code = studyCode
+  )
+  tryCatch({
+    DBI::dbExecute(private$db_conn, delStudyStmt)
+  }, 
+  error = function(error){
+    # need the <<- because changing variables in the outer scope do not "stick" here inside the catch (For some reason changes do stick in the try).
+    messageToReturn$data$success <<- FALSE
+    messageToReturn$logcontent <<- paste0("Deletion of study: ", companyDesc, " by ",
+                                          message$data$username, "/",
+                                          message$data$email, ": ",
+                                          " Error: ", paste(error, collapse = ";"))
+    print(error)
+  })
+  messageToReturn$data$studies_table <- getAllStudies(private$db_conn)
+  getStudiesSql <- "SELECT * FROM studies"
+  messageToReturn$data$all_studies <- DBI::dbGetQuery(private$db_conn, getStudiesSql)
+  return(messageToReturn)
 }
 
 DBI_login_with_microsoft_handler <- function(self, private, message) {

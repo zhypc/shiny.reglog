@@ -114,6 +114,42 @@ RegLogServer_listener <- function(
               self$message(received_message)
             },
             
+            addCompany = {
+              self$companies_table(received_message$data$companies_table)
+              self$all_companies(received_message$data$all_companies)
+              self$message(received_message)
+            },
+            
+            editCompany = {
+              self$companies_table(received_message$data$companies_table)
+              self$all_companies(received_message$data$all_companies)
+              self$message(received_message)
+            },
+            
+            delCompany = {
+              self$companies_table(received_message$data$companies_table)
+              self$all_companies(received_message$data$all_companies)
+              self$message(received_message)
+            },
+            
+            addStudy = {
+              self$studies_table(received_message$data$studies_table)
+              self$all_studies(received_message$data$all_studies)
+              self$message(received_message)
+            },
+            
+            editStudy = {
+              self$studies_table(received_message$data$studies_table)
+              self$all_studies(received_message$data$all_studies)
+              self$message(received_message)
+            },
+            
+            delStudy = {
+              self$studies_table(received_message$data$studies_table)
+              self$all_studies(received_message$data$all_studies)
+              self$message(received_message)
+            },
+            
             ## login messages reactions ####
             login = {
               # if couldn't log in

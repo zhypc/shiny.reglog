@@ -28,6 +28,8 @@ RegLogServer_backend <- function(
       self$all_users <- reactiveVal()
       self$all_studies <- reactiveVal()
       self$all_companies <- reactiveVal()
+      self$companies_table <- reactiveVal()
+      self$studies_table <- reactiveVal()
       self$account_id <- reactiveVal()
       private$listener <- reactiveVal()
       
