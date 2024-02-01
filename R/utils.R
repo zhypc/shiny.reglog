@@ -47,16 +47,17 @@ modals_check_n_show <- function(private, modalname) {
 }
 
 check_user_login <- function(x){
-  nchar(x) >= 3 & nchar(x) <= 30
-}
-
-getRandomString <- function(n = 1) {
-  a <- do.call(paste0, replicate(5, sample(letters, n, TRUE), FALSE))
-  paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(letters, n, TRUE))
+  nchar(x) >= 8 & nchar(x) <= 30 & grepl("^[[:alnum:]]+$", x)
 }
 
 check_user_pass <- function(x){
-  nchar(x) >= 8 & nchar(x) <= 30
+  pass_length <- nchar(x) >= 8 & nchar(x) <= 30
+  small_letter <- stringi::stri_detect(str = x, regex = "(?=.*[a-z])")
+  big_letter <- stringi::stri_detect(str = x, regex = "(?=.*[A-Z])")
+  pass_number <- stringi::stri_detect(str = x, regex = "(?=.*\\d)")
+  pass_symbols <- stringi::stri_detect(str = x, regex = "[-+_!@#$%^&*.,?]")
+  
+  pass_length && sum(small_letter, big_letter, pass_number, pass_symbols) >= 3
 }
 
 check_user_mail <- function(x) {
@@ -128,56 +129,4 @@ db_timestamp <- function() {
   
   format(Sys.time(), format = "%Y-%m-%d %H:%M:%OS3")
   
-}
-
-getUserPermissions <- function(userId, conn){
-  getUserPermissionsSql = 
-    "SELECT permissions.id, studies.code, users.username FROM permissions
-        INNER JOIN studies ON studies.id = permissions.study_id
-        INNER JOIN users ON users.id = permissions.user_id
-       WHERE user_id = ?user_id"
-  getUserPermissionQuery = DBI::sqlInterpolate(conn, getUserPermissionsSql, user_id = userId)
-  DBI::dbGetQuery(conn, getUserPermissionQuery)
-}
-
-
-getAllPermissions <- function(conn) {
-  getPermissionsSql <- "SELECT permissions.id AS Id, users.username AS Username, studies.code AS Study FROM permissions 
-                  INNER JOIN users ON users.id = permissions.user_id
-                  INNER JOIN studies ON studies.id = permissions.study_id"
-  DBI::dbGetQuery(conn, getPermissionsSql)
-}
-
-getUserIdFromUsername <- function(conn, username){
-  getUserSql <- "SELECT id FROM users WHERE username = ?username"
-  getUserQuery <- DBI::sqlInterpolate(conn, getUserSql, username = username)
-  DBI::dbGetQuery(conn, getUserQuery)[[1]]
-}
-
-getStudyIdFromCode <- function(conn, code){
-  getStudySql <- "SELECT id FROM studies WHERE code = ?code"
-  getStudyQuery <- DBI::sqlInterpolate(conn, getStudySql, code = code)
-  DBI::dbGetQuery(conn, getStudyQuery)[[1]]
-}
-
-getCompanyIdFromDescription <- function(conn, description) {
-  getCompanySql <- "SELECT id from companies WHERE description = ?description"
-  getCompanyQuery <- DBI::sqlInterpolate(conn, getCompanySql, description = description)
-  DBI::dbGetQuery(conn, getCompanyQuery)[[1]]
-}
-
-getAllCompanies <- function(conn) {
-  getCompaniesSql <- "SELECT code AS CompanyCode, description AS Company, id as CompanyID from companies"
-  DBI::dbGetQuery(conn, getCompaniesSql)
-}
-
-getAllStudies <- function(conn) {
-  getStudiesSql <- "SELECT studies.code AS StudyCode,
-                    companies.description AS Company,
-                    studies.description AS Long_name,
-                    studies.drug_name as Trial_Drug,
-                    studies.subjid_unique as Unique_Subjid,
-                    studies.id AS StudyID
-                    from studies INNER JOIN companies ON companies.id = studies.company_id"
-  DBI::dbGetQuery(conn, getStudiesSql)
 }
