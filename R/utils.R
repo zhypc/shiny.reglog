@@ -52,15 +52,19 @@ check_user_login <- function(x){
 
 check_user_pass <- function(x){
   pass_length <- nchar(x) >= 8 & nchar(x) <= 30
-  small_letter <- stringi::stri_detect(str = x, regex = "(?=.*[a-z])")
-  big_letter <- stringi::stri_detect(str = x, regex = "(?=.*[A-Z])")
-  pass_number <- stringi::stri_detect(str = x, regex = "(?=.*\\d)")
-  pass_symbols <- stringi::stri_detect(str = x, regex = "[-+_!@#$%^&*.,?]")
-  
-  pass_length && sum(small_letter, big_letter, pass_number, pass_symbols) >= 3
+  # small_letter <- stringi::stri_detect(str = x, regex = "(?=.*[a-z])")
+  # big_letter <- stringi::stri_detect(str = x, regex = "(?=.*[A-Z])")
+  # pass_number <- stringi::stri_detect(str = x, regex = "(?=.*\\d)")
+  # pass_symbols <- stringi::stri_detect(str = x, regex = "[-+_!@#$%^&*.,?]")
+  # 
+  # pass_length && sum(small_letter, big_letter, pass_number, pass_symbols) >= 3
 }
 
 check_user_mail <- function(x) {
+  ###检测是否是 edu 或者 edu.cn 结尾的
+  #check1 <- stringi::stri_detect(regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z-a-z]{2,}$", str = as.character(x))
+  #check2 <- stringi::stri_detect(regex = "edu\\..+$|\\.edu$", str=as.character(x))
+  #check1 & check2
   stringi::stri_detect(regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z-a-z]{2,}$", str = as.character(x))
 }
 
