@@ -13,8 +13,6 @@ RegLogServer <- R6::R6Class(
     #' @field is_logged reactiveVal containing logical indicating if the user 
     #' is logged in
     is_logged = NULL,
-    #' @field is_logged_microsoft reactiveVal containing logical indicating if the user used Microsoft to log in 
-    is_logged_microsoft = NULL,
     #' @field user_id reactiveVal containing character specifying the logged 
     #' user name. If the user is not logged in, it will consist 
     #' of uuid generated with `uuid::UUIDgenerate`
@@ -22,20 +20,6 @@ RegLogServer <- R6::R6Class(
     #' @field user_mail reactiveVal cantaining character string specifying the 
     #' logged user mail. When not logged in, it contains NULL.
     user_mail = NULL,
-    #' @field permissions table of current user's permissions for various studies
-    permissions = NULL,
-    #' @field all_permissions table of all users' permissions for various studies
-    all_permissions = NULL,
-    #' @field all_users table of all users
-    all_users = NULL,
-    #' @field all_companies table of all companies
-    all_companies = NULL,
-    #' @field all_studies table of all studies
-    all_studies = NULL,
-    #' @field companies_table table of all companies
-    companies_table = NULL,
-    #' @field studies_table table of all studies
-    studies_table = NULL,
     #' @field account_id reactiveVal caintaining integer specifying the logged 
     #' user account's id number: for SQL database it is equal to the value
     #' contained withing `id` variable. For googlesheets database it is equal to

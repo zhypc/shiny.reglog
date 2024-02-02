@@ -48,7 +48,8 @@ RegLogServer_frontend <- function(
           description = p(
             RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="register_ui_2"),
             tags$ul(tags$li(RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="register_ui_3")),
-                    tags$li(RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="register_ui_4")))),
+                    tags$li(RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="register_ui_4")),
+                    tags$li(RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="register_ui_5")))),
           id_input = textInput(
             session$ns("register_user_ID"), 
             label = RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x ="user_id")

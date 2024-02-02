@@ -184,7 +184,7 @@ RegLogConnector = R6::R6Class(
 #' @param ... named arguments that will be passed as data
 #' @param logcontent character string. Optional description to save into logs.
 #' 
-#' @return object of `RegLogConnectorMessage` class, containing fields:
+#' @return object of `RegLogConnector` class, containing fields:
 #' 
 #' - *time*: numeric representation of `Sys.time()`
 #' - *type*: character specifying the type of message

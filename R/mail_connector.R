@@ -12,7 +12,12 @@ parse_register_body <- function(private) {
     "?username?",
     "</p><p>",
     RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x = "reg_mail_3"),
+    "?app_address?",
+    "</p><p>",
+    RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x = "reg_mail_4"),
     "?password?",
+    "</p><p>",
+    RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x = "reg_mail_5"),
     "</p><hr>",
     RegLog_txt(lang = private$lang, custom_txts = private$custom_txts, x = "mail_automatic"))
 }

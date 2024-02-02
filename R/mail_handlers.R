@@ -38,7 +38,7 @@ emayili_reglog_mail_handler <- function(self, private, message) {
       app_address = message$data$app_address,
       reset_code = message$data$reset_code
     ))
-  
+
   # interpolate body with elements found
   mail_body <- string_interpolate(
     x = self$mails[[message$data$process]][["body"]],

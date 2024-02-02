@@ -20,16 +20,8 @@ RegLogServer_backend <- function(
       self$message <- reactiveVal()
       self$mail_message <- reactiveVal()
       self$is_logged <- reactiveVal(FALSE)
-      self$is_logged_microsoft <- reactiveVal(FALSE)
       self$user_id <- reactiveVal(uuid::UUIDgenerate())
       self$user_mail <- reactiveVal()
-      self$permissions <- reactiveVal()
-      self$all_permissions <- reactiveVal()
-      self$all_users <- reactiveVal()
-      self$all_studies <- reactiveVal()
-      self$all_companies <- reactiveVal()
-      self$companies_table <- reactiveVal()
-      self$studies_table <- reactiveVal()
       self$account_id <- reactiveVal()
       private$listener <- reactiveVal()
       
@@ -85,7 +77,7 @@ RegLogServer_backend <- function(
       # register UI reactions ####
       
       observeEvent(input$register_bttn, {
-
+        
         # check if the inputs are filled
         if (!all(isTruthy(input$register_user_ID), isTruthy(input$register_email))) {
           
@@ -145,7 +137,7 @@ RegLogServer_backend <- function(
               type = "register",
               username = trimws(input$register_user_ID, "both"),
               password = trimws(temporaryPassword, "both"),
-              email = trimws(tolower(input$register_email), "both")
+              email = trimws(input$register_email, "both")
             )
             
             shinyjs::runjs("$('.reglog_bttn').attr('disabled', true)")
@@ -323,7 +315,7 @@ RegLogServer_backend <- function(
             account_id = self$account_id(),
             password = input$cred_edit_old_pass,
             new_username = if (isTruthy(input$cred_edit_new_ID)) input$cred_edit_new_ID,
-            new_email = if (isTruthy(input$cred_edit_new_mail)) tolower(input$cred_edit_new_mail)
+            new_email = if (isTruthy(input$cred_edit_new_mail)) input$cred_edit_new_mail
           )
           
           blank_textInputs(c("cred_edit_old_pass", 

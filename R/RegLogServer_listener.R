@@ -44,8 +44,6 @@ RegLogServer_listener <- function(
                 self$user_id(uuid::UUIDgenerate())
                 self$user_mail(NULL)
                 self$account_id(NULL)
-                self$permissions(NULL)
-                self$is_logged_microsoft(FALSE)
                 
               } else {
                 
@@ -78,78 +76,6 @@ RegLogServer_listener <- function(
           switch(
             received_message$type,
             
-            getAllPermissions = {
-              self$all_permissions(received_message$data$all_permissions)
-              self$all_companies(received_message$data$all_companies)
-              self$all_studies(received_message$data$all_studies)
-              self$all_users(received_message$data$all_users)
-              self$companies_table(received_message$data$companies_table)
-              self$studies_table(received_message$data$studies_table)
-              self$message(received_message)
-            },
-            
-            adjustPermissions = {
-              if(received_message$data$action == "Grant"){
-                if(received_message$data$success){
-                  modals_check_n_show(private = private,
-                                      modalname = "permission_grant_success")
-                }
-                else{
-                  modals_check_n_show(private = private,
-                                      modalname = "permission_grant_fail")
-                }
-              }
-              else if(received_message$data$action == "Revoke"){
-                if(received_message$data$success){
-                  modals_check_n_show(private = private,
-                                      modalname = "permission_revoke_success")
-                }
-                else{
-                  modals_check_n_show(private = private,
-                                      modalname = "permission_revoke_fail")
-                }
-              }
-              
-              self$all_permissions(received_message$data$all_permissions)
-              self$message(received_message)
-            },
-            
-            addCompany = {
-              self$companies_table(received_message$data$companies_table)
-              self$all_companies(received_message$data$all_companies)
-              self$message(received_message)
-            },
-            
-            editCompany = {
-              self$companies_table(received_message$data$companies_table)
-              self$all_companies(received_message$data$all_companies)
-              self$message(received_message)
-            },
-            
-            delCompany = {
-              self$companies_table(received_message$data$companies_table)
-              self$all_companies(received_message$data$all_companies)
-              self$message(received_message)
-            },
-            
-            addStudy = {
-              self$studies_table(received_message$data$studies_table)
-              self$all_studies(received_message$data$all_studies)
-              self$message(received_message)
-            },
-            
-            editStudy = {
-              self$studies_table(received_message$data$studies_table)
-              self$all_studies(received_message$data$all_studies)
-              self$message(received_message)
-            },
-            
-            delStudy = {
-              self$studies_table(received_message$data$studies_table)
-              self$all_studies(received_message$data$all_studies)
-              self$message(received_message)
-            },
-            
             ## login messages reactions ####
             login = {
               # if couldn't log in
@@ -167,17 +93,15 @@ RegLogServer_listener <- function(
                 }
               } else {
                 # if login is successful
-                # TODO: Maybe add a toast notification here
-                # modals_check_n_show(private = private,
-                #                     modalname = "login_success")
+                modals_check_n_show(private = private,
+                                    modalname = "login_success")
                 
                 # change the log-in state
                 self$is_logged(TRUE)
                 self$account_id(received_message$data$account_id)
                 self$user_id(received_message$data$user_id)
                 self$user_mail(received_message$data$user_mail)
-                self$permissions(received_message$data$permissions)
-                self$is_logged_microsoft(received_message$data$is_logged_microsoft)
+                
               }
             },
             
@@ -198,13 +122,12 @@ RegLogServer_listener <- function(
                     username = received_message$data$user_id,
                     email = received_message$data$user_mail,
                     app_name = private$app_name,
+                    app_address = private$app_address,
                     password = received_message$data$password
                   )
                   
-                  # email them their password
                   self$mailConnector$listener(message_to_send)
                   save_to_logs(message_to_send, "sent", self, session)
-                  
                 }
                 
               } else {
@@ -274,7 +197,7 @@ RegLogServer_listener <- function(
                   "reglog_mail",
                   process = "resetPass",
                   username = received_message$data$user_id,
-                  email = tolower(received_message$data$user_mail),
+                  email = received_message$data$user_mail,
                   app_name = private$app_name,
                   app_address = private$app_address,
                   reset_code = received_message$data$reset_code

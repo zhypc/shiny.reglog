@@ -31,7 +31,7 @@ reglog_texts$en = list(
   # register module specific labels
  register_ui_1 = "Registration form",
  register_ui_2 = "In the form below you can register a new account. Choose a user ID, provide a valid e-mail adress and choose a password for your account.",
- register_ui_3 = "Password should consist of 8~25 alphanumeric characters,",
+ register_ui_3 = "User ID and password should consist of 8~25 alphanumeric characters,",
  register_ui_4 = "You should have access to the provided e-mail address. After registration you will receive a confirmation e-mail. Moreover, if you ever forget your password you can reset it with your e-mail.",
  register_bttn = "Register",
   ### modal labels ###
@@ -63,11 +63,11 @@ reglog_texts$en = list(
  reg_mod_err1m_t = "User email non-unique",
  reg_mod_err1m_b = "There is an user with that email in our database. If you have already made an account, try to log-in or reset your password. If you haven't, then please use another email.",
  reg_mod_err2_t = "User ID non-valid",
- reg_mod_err2_b = "User ID is not valid. User ID must consist of 3-30 characters.",
+ reg_mod_err2_b = "User ID is not valid. User ID must consist of 8~25 aphanumeric characters.",
  reg_mod_err3_t = "E-mail not valid",
  reg_mod_err3_b = "Provided e-mail address isn't valid. Please check if it is correctly typed.",
  reg_mod_err4_t = "Non-valid password",
- reg_mod_err4_b = "Password is not valid. It must consist of 8~30 aphanumeric characters.",
+ reg_mod_err4_b = "Password is not valid. It must consist of 8~25 aphanumeric characters.",
  reg_mod_err5_t = "Passwords don't match",
  reg_mod_err5_b = "Provided passwords don't match. Repeated password must be exactly the same as the first one.",
  reg_mod_succ_t = "User registered",

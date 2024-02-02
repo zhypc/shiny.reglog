@@ -26,7 +26,7 @@ RegLogDemo <- function(emayili_smtp = NULL,
     RSQLite::SQLite(),
     dbname = sqlite_db
   )
-  DBI_tables_create(conn = conn, use_log = T)
+  DBI_tables_create(conn = conn, verbose = F)
   DBI::dbDisconnect(conn)
   
   # define custom handler function to read all data from the tables

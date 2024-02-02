@@ -31,20 +31,12 @@ RegLog_txts$en = list(
   reset_bttn_2 = "Confirm code",
   ### register module specific labels ####
   register_ui_1 = "Registration form",
-  register_ui_2 = "To register, choose a user ID and provide a valid email adress",
+  register_ui_2 = "To register, choose a user ID provide a valid e-mail adress and choose a password for your account. ",
   register_ui_3 = "A password will be automatically generated and sent to your email address",
-  register_ui_4 = "Please change the password afterwards using the reset password feature.",
+  register_ui_4 = "Please change the password afterwards using the reset password feature",
+  #register_ui_5 = "If you do not have an email address from an education or research institution, then you can request access by emailing us (haopeng.wang@gmail.com)",
   register_bttn = "Register",
   ## modal texts ####
-  ### permissions management modals ####
-  permission_grant_success_t = "Permission granted",
-  permission_grant_success_b = "Permission granted to user",
-  permission_grant_fail_t = "Error",
-  permission_grant_fail_b = "Permission was not granted to user. Please check if this is a valid action. Does the user already have access?",
-  permission_revoke_success_t = "Permission revoked",
-  permission_revoke_success_b = "Permission revoked for user",
-  permission_revoke_fail_t = "Error",
-  permission_revoke_fail_b = "Permission was not revoked for user. Please check if this is a valid action.",
   ### login modals ####
   login_noInput_t = "Missing data",
   login_noInput_b = "To login, please provide your User ID and password.",
@@ -130,6 +122,8 @@ RegLog_txts$en = list(
   reg_mail_1 = "Thank you for registering an account in our application.",
   reg_mail_2 = "Your user ID: ",
   reg_mail_3 = "You can always visit our application at: ",
+  reg_mail_4 = "Your passwd is: ",
+  reg_mail_5 = "Please change the password afterwards using the reset password feature",
   # credentials edit
   crededit_mail_h = "data edit confirmation",
   crededit_mail_1 = "Credentials data has been changed for user identified by user ID:",
